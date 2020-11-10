@@ -1,45 +1,72 @@
-const colors = [
-    '#FFFFFF',
-    '#2196F3',
-    '#4CAF50',
-    '#FF9800',
-    '#009688',
-    '#795548',
-  ];
+ 
+class CountdownTimer {
+  constructor({selector,targetDate}){
+    this.selector = selector;
+    this.targetDate = targetDate; 
+    this.ref = CountdownTimer.getControl();
+    this.intervalId = null;
+  }
 
-  const bodyTheme = document.querySelector("body");
+   calculate(){
+    const currentTime = Date.now();
+    const deltaTime = timer.targetDate - currentTime;
+    const daysAmount = CountdownTimer.days(deltaTime);
+    const hoursAmount = CountdownTimer.hours(deltaTime);
+    const minsAmount =CountdownTimer.mins(deltaTime);
+    const secsAmount = CountdownTimer.secs(deltaTime);
+    this.ref.daysElement.innerHTML = daysAmount;
+    this.ref.hoursElement.innerHTML = hoursAmount;
+    this.ref.minsElement.innerHTML = minsAmount;
+    this.ref.secsElement.innerHTML = secsAmount;
+  }
 
-  const controls = {
-     START: document.querySelector('[data-action="start"]'),
-     STOP: document.querySelector('[data-action="stop"]'),
-  };
-  controls.START.addEventListener('click', startChange);
-  controls.STOP.addEventListener('click', stopChange);
+  start() {
+    intervalId = setInterval(() => this.calculate(), 1000);
+  }
   
-    //Функция которая достает цвет из массива
-  const randomIntegerFromInterval = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
+  static getControl(){
+    return {
+      daysElement : document.querySelector('[data-value="days"]'),
+      hoursElement : document.querySelector('[data-value="hours"]'),
+      minsElement : document.querySelector('[data-value="mins"]'),
+      secsElement : document.querySelector('[data-value="secs"]'),
+    }
+  }
+/*
+ * Оставшиеся дни: делим значение UTC на 1000 * 60 * 60 * 24, количество
+ * миллисекунд в одном дне (миллисекунды * секунды * минуты * часы)
+ */
+ static days(time) {
+   return Math.floor(time / (1000 * 60 * 60 * 24))
+  }; 
 
-function getColor (){
-  let i = randomIntegerFromInterval(0, colors.length - 1);
-  let Color = colors[i];
-  bodyTheme.style.background = Color;
-}
-  // Запускает таймер
-  
-  let timer = null;
-  function startChange (){
-     timer = setInterval( getColor, 100);
-     controls.START.disabled=true;
-} ;
+/*
+ * Оставшиеся часы: получаем остаток от предыдущего расчета с помощью оператора
+ * остатка % и делим его на количество миллисекунд в одном часе
+ * (1000 * 60 * 60 = миллисекунды * минуты * секунды)
+ */
+static hours(time) { 
+   return Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))};
 
+/*
+ * Оставшиеся минуты: получаем оставшиеся минуты и делим их на количество
+ * миллисекунд в одной минуте (1000 * 60 = миллисекунды * секунды)
+ */
+static mins(time) { 
+   return Math.floor((time % (1000 * 60 * 60)) / (1000 * 60))};
 
-  //Останавливает таймер
-  
-  function stopChange (){ 
-    clearInterval(timer)
-    controls.START.disabled=false;
-  };
-  
-  
+/*
+ * Оставшиеся секунды: получаем оставшиеся секунды и делим их на количество
+ * миллисекунд в одной секунде (1000)
+ */
+static secs(time) { 
+   return Math.floor((time % (1000 * 60)) / 1000)};
+};
+
+const timer = new CountdownTimer({
+  selector: '#timer-1',
+  targetDate: new Date('Jul 17, 2021'),
+
+});
+ timer.start();
+ 
