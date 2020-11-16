@@ -1,4 +1,5 @@
  
+import './style.css';
 class CountdownTimer {
   constructor({selector,targetDate}){
     this.selector = selector;
